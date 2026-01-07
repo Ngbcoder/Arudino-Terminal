@@ -1,10 +1,12 @@
-⚡ Zeus Monitor
+
+
+## ⚡ Zeus Monitor
 
 A modular, high-visibility system monitor for Raspberry Pi. Zeus bridges the gap between a modern web-based dashboard and a physical 16x2 LCD display, giving you a dedicated "at-a-glance" window into your home lab or desktop setup.
 
 I built this because I wanted a way to see my notifications, weather, and server status without having to open a browser tab or check my phone. With the new plugin system, you can pull in just about any data you care about.
 
-✨ What it does
+##  ✨ What it does
 
 Hybrid Dashboard: View stats on a physical I2C LCD or through a sleek, responsive web UI.
 
@@ -28,80 +30,51 @@ Web Editor: Fix bugs or tweak logic right from the browser—no SSH required for
 
 🛠️ Setting it up
 
-1. Grab the code
+1.  Grab the code
 
-cd /home/npi
-git clone git@github.com:Ngbcoder/Arudino-Terminal.git uno
-cd uno
+`cd /home/npi git clone  [git@github.com](mailto:git@github.com):Ngbcoder/Arudino-Terminal.git uno cd uno`
 
+2.  Install the essentials
 
-2. Install the essentials
+`pip install flask pyserial pytz python-dotenv requests docker`
 
-pip install flask pyserial pytz python-dotenv requests docker
-
-
-3. Configure your environment
+3.  Configure your environment
 
 Create a .env file in the root directory. This is where the magic (and your API keys) lives:
 
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
-EMAIL_IMAP=imap.gmail.com
-KUMA_ID=1
-LOCATION=City,State
-TOMORROW_API_KEY=your_api_key
-GOODREADS_RSS=your_rss_url
-THEME=midnight
+`EMAIL_USER=[your_email@gmail.com] 
+EMAIL_PASS=your_app_password 
+EMAIL_IMAP=imap.gmail.com 
+KUMA_ID=1 
+LOCATION=City,State 
+TOMORROW_API_KEY=your_api_key 
+GOODREADS_RSS=your_rss_url THEME=midnight`
 
-
-4. Make it a Service
+4.  Make it a Service
 
 To make sure Zeus starts up whenever your Pi boots:
 
-sudo nano /etc/systemd/system/uno-monitor.service
-
+`sudo nano /etc/systemd/system/uno-monitor.service`
 
 Paste this in (just double-check that your paths are correct):
 
-[Unit]
-Description=Zeus Monitor Service
-After=network.target
-
-[Service]
-ExecStart=/usr/bin/python3 /home/npi/uno/main.py
-WorkingDirectory=/home/npi/uno
-StandardOutput=inherit
-StandardError=inherit
-Restart=always
-User=npi
-
-[Install]
-WantedBy=multi-user.target
-
+`[Unit] Description=Zeus Monitor Service After=network.target
+[Service] ExecStart=/usr/bin/python3 /home/npi/uno/main.py WorkingDirectory=/home/npi/uno StandardOutput=inherit StandardError=inherit Restart=always User=npi
+[Install] WantedBy=multi-user.target`
 
 Then fire it up:
 
-sudo systemctl enable uno-monitor.service
-sudo systemctl start uno-monitor.service
-
+`sudo systemctl enable uno-monitor.service sudo systemctl start uno-monitor.service`
 
 🔌 Writing your own Plugins
 
-Adding a new screen is dead simple. Just create a .py file in the plugins/ folder. Zeus looks for a function called get_screen_data().
+Adding a new screen is dead simple. Just create a .py file in the plugins/ folder. Zeus looks for a function called `get_screen_data().`
 
 Here’s a quick Bitcoin price example (btc.py):
 
-import requests
+`import requests`
 
-def get_screen_data():
-    try:
-        r = requests.get("[https://api.coinbase.com/v2/prices/BTC-USD/spot](https://api.coinbase.com/v2/prices/BTC-USD/spot)", timeout=2)
-        price = r.json()['data']['amount']
-        # Use "|" to split the top and bottom lines of the LCD
-        return f"BTC Price:     |${float(price):,.0f}"
-    except:
-        return "Crypto Error   |Check Connection"
-
+`def get_screen_data(): try: r = requests.get("[https://api.coinbase.com/v2/prices/BTC-USD/spot](https://api.coinbase.com/v2/prices/BTC-USD/spot)", timeout=2) price = r.json()['data']['amount'] # Use "|" to split the top and bottom lines of the LCD return f"BTC Price: |${float(price):,.0f}" except: return "Crypto Error |Check Connection"`
 
 🎨 Themes
 
