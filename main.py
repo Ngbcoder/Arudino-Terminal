@@ -5,7 +5,7 @@ from datetime import datetime
 from dotenv import load_dotenv, set_key
 
 # Load .env with an absolute path so the service doesn't lose it
-load_dotenv(dotenv_path="/home/npi/uno/.env")
+load_dotenv(dotenv_path="~/uno/.env")
 app = Flask(__name__)
 local_tz = pytz.timezone("America/New_York")
 
@@ -32,7 +32,7 @@ def get_unread_count():
 def get_kuma_status():
     TARGET_ID = "1" # Your 'outerwebs' group ID
     try:
-        api_url = "http://192.168.1.8:3001/api/status-page/heartbeat/default"
+        api_url = os.getenv('Kuma_IP')
         response = requests.get(api_url, timeout=3)
         data = response.json()
         heartbeats = data.get('heartbeatList', {}).get(TARGET_ID, [])
